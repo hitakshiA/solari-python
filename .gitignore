@@ -1,0 +1,12 @@
+# local virtualenv and caches
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/
+build/
+dist/
+
+# secrets
+.env
+.env.*
