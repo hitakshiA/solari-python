@@ -302,12 +302,12 @@ async def test_act_sends_the_node_and_its_guard_and_returns_a_fresh_observation(
 
 
 @sync
-async def test_type_with_submit_presses_enter_after() -> None:
+async def test_type_with_submit_asks_reflexd_to_press_enter() -> None:
     d = FakeReflexd()
     o = observer(d)
     await o.observe()
     await o.act("e1", "type", text="x", submit=True)
-    assert d.dispatched == [{"kind": "type", "node": 1, "text": "x"}, {"kind": "press", "key": "Enter"}]
+    assert d.dispatched == [{"kind": "type", "node": 1, "text": "x", "submit": True}]
 
 
 @sync

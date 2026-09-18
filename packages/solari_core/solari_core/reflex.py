@@ -80,7 +80,9 @@ if ! python3 -c 'import gi; gi.require_version("Atspi","2.0")' 2>/dev/null; then
 fi
 mkdir -p /opt/reflex
 echo '{reflexd_gz_b64()}' | base64 -d | gunzip > /opt/reflex/reflexd.py
-P=$(pgrep -x xfce4-session | head -1)
+# A fresh desktop may still be starting its session; wait for it rather than fail silently.
+for i in $(seq 1 60); do P=$(pgrep -x xfce4-session | head -1 || true); [ -n "$P" ] && break; sleep 0.5; done
+[ -n "$P" ] || {{ echo "no desktop session (xfce4-session) is running"; exit 1; }}
 ps -o user= -p "$P" | tr -d ' ' > /opt/reflex/user
 tr '\\0' '\\n' < /proc/$P/environ | grep -E '^(DBUS_SESSION_BUS_ADDRESS|DISPLAY|XDG_RUNTIME_DIR|HOME|XAUTHORITY)=' > /opt/reflex/session.env
 cat > /opt/reflex/start.sh <<'SH'
@@ -261,6 +263,9 @@ class DesktopObserver:
                 if text is None:
                     raise ValueError('act(..., "type") needs text=')
                 payload["text"] = text
+                if submit:
+                    # reflexd types with real key input and presses Enter itself.
+                    payload["submit"] = True
             elif action == "select":
                 if value is None:
                     raise ValueError('act(..., "select") needs value=')
@@ -279,8 +284,6 @@ class DesktopObserver:
         r = await self._call("/act", {"action": payload, "guard": guard}, retry=False)
         if isinstance(r, dict) and r.get("error"):
             raise StaleObservationError(label or action, str(r["error"]))
-        if action == "type" and submit:
-            await self._call("/act", {"action": {"kind": "press", "key": "Enter"}, "guard": None}, retry=False)
         return await self.observe()
 
     async def launch(
