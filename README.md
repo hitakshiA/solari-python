@@ -41,10 +41,10 @@ The desktop was deleted in a `finally`. The list API then showed no machines run
 
 | Step | Time |
 |---|---|
-| `observe()`, first call on the page (installs the observer in the same evaluate) | 0.59 s |
+| `observe()`, first call on the page (installs the observer in the same evaluate) | 0.71 s |
 | `observe()` (54 controls) | 0.30 s |
-| `act(e2, "type", text="Gödel's incompleteness theorems")`, including the fresh observation and its suggestion list | 1.73 s |
-| `observe()` again | 0.28 s |
+| `act(e2, "type", text="Gödel's incompleteness theorems")`, including the fresh observation and its suggestion list | 1.46 s |
+| `observe()` again | 0.29 s |
 
 A browser observe is one round trip. A type act is five: guard and locate, click, select-all, insert the text, then settle and observe.
 
@@ -53,7 +53,7 @@ A browser observe is one round trip. A type act is five: guard and locate, click
 1. **Import the four sdists unmodified.** solari-core, solari-desktop and solari-sandbox are MIT; solari-browser is Apache-2.0.
 2. **Ignore the local venv, caches and `.env`.**
 3. **`solari_desktop`: depend on `solari-core==0.2.1`.** Upstream pins `==0.2.0`, while solari-sandbox 0.2.1 pins `==0.2.1`. From PyPI, `pip install solari-desktop solari-sandbox` quietly falls back to sandbox 0.2.0 and core 0.2.0. Installing from source fails outright.
-4. **Vendor the solari-reflex observer and `reflexd`,** with `scripts/sync_reflex.py` to regenerate them from a solari-reflex checkout (both come from commit `d50025f`).
+4. **Vendor the solari-reflex observer and `reflexd`,** with `scripts/sync_reflex.py` to regenerate them from a solari-reflex checkout (first from commit `d50025f`).
    - `solari_browser/observer.js` is `installObserver`, taken from the built `dist/page/observer.js`.
    - `solari_core/reflexd/reflexd.py` is copied byte for byte and ships as package data.
 5. **`solari_core`: `Observation`, `ObservedElement` and `format_observation()`.** The tests hold the formatter to golden output from the TS `formatObservation`.
@@ -73,6 +73,7 @@ A browser observe is one round trip. A type act is five: guard and locate, click
 8. **Unique test module names,** so `pytest packages/*/tests` runs every suite in one go.
 9. **Mark the two solari-browser files the fork changed,** as Apache-2.0 section 4(b) asks.
 10. **This README, `NOTICE` and `scripts/live_check.py`.**
+11. **Resync the page observer to solari-reflex `5a81e77` (observer v6).** A nameless or zero-size button painted over a control, like Stripe Checkout's payment rows, no longer hides it. `reflexd` is unchanged. The browser timings above were re-measured on v6.
 
 No existing API was removed or changed; the only edit to existing behaviour is the dependency pin. The upstream test suite (28 tests in solari-browser) still passes, alongside 44 new tests. Run everything with `pytest packages/*/tests`.
 
