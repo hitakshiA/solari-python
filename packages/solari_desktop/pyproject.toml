@@ -11,7 +11,7 @@ requires-python = ">=3.9"
 license = { text = "MIT" }
 authors = [{ name = "Solari" }]
 keywords = ["solari", "desktop", "computer-use", "vnc", "automation"]
-dependencies = ["solari-core==0.2.0"]
+dependencies = ["solari-core==0.2.1"]
 
 [project.urls]
 Homepage = "https://getsolari.com"
