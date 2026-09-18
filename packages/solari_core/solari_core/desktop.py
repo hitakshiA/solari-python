@@ -17,9 +17,11 @@ from __future__ import annotations
 
 import base64
 from dataclasses import dataclass
-from typing import Any, Callable, Dict, List, Optional, Union
+from typing import Any, Callable, Dict, List, Literal, Optional, Union
 
 from .handle import SessionConfig, SessionHandle, SessionHooks
+from .observation import ActKind, Observation, ObservedElement
+from .reflex import DesktopObserver
 from .types import (
     CreateDesktopResponse,
     ExecResult,
@@ -91,6 +93,9 @@ class Desktop(SessionHandle):
         self.pkg = _Pkg(self)
         self.record = _Record(self)
         self.stream = _Stream(self)
+        #: Fast observe/act through reflexd (solari-python fork). Started on
+        #: first use of :meth:`observe`, :meth:`act` or :meth:`launch`.
+        self.observer = DesktopObserver(self)
 
     @property
     def sessionId(self) -> str:
@@ -167,6 +172,64 @@ class Desktop(SessionHandle):
         """Launch a GUI app by name (``app.open``); returns its pid."""
         r = await self._call("app.open", {"name": name, "args": args})
         return int(r["pid"])
+
+
+    # --- fast observe / act (solari-python fork) ------------------------------
+
+    async def observe(self) -> Observation:
+        """Read the active window as numbered controls plus its visible text.
+
+        One request to ``reflexd`` in the desktop, which reads the Linux
+        accessibility tree. The first call turns accessibility on and installs
+        reflexd (about 10 s on a fresh desktop); later calls take one round
+        trip. Use :func:`~solari_core.observation.format_observation` for the
+        compact text an LLM reads.
+        """
+        return await self.observer.observe()
+
+    async def act(
+        self,
+        ref: Union[str, ObservedElement, None],
+        action: ActKind = "click",
+        *,
+        text: Optional[str] = None,
+        value: Optional[str] = None,
+        key: Optional[str] = None,
+        direction: Literal["up", "down"] = "down",
+        submit: bool = False,
+        observation: Optional[Observation] = None,
+    ) -> Observation:
+        """Act on control ``ref`` (e.g. ``"e7"``) from the last :meth:`observe`
+        and return a fresh observation.
+
+        ``action`` is ``click``, ``type`` (with ``text``; ``submit=True`` presses
+        Enter after), ``select`` (with ``value``), ``press`` (``key`` is
+        ``Enter``, ``Escape`` or ``Tab``; ``ref`` is ignored), ``scroll``
+        (``direction``) or ``wait``.
+
+        The control's guard is re-checked inside the desktop before any input:
+        when it changed, disappeared or is covered, nothing is dispatched and
+        :class:`~solari_core.errors.StaleObservationError` is raised.
+        """
+        return await self.observer.act(
+            ref, action, text=text, value=value, key=key, direction=direction,
+            submit=submit, observation=observation,
+        )
+
+    async def launch(
+        self, command: str, args: Optional[List[str]] = None, *, wait_ms: int = 45_000
+    ) -> Observation:
+        """Start a GUI app with accessibility on, as the desktop user, and wait
+        for its window. Returns the first observation of it.
+
+        Prefer this over :meth:`open` for apps you want to :meth:`observe`: an
+        app started without the accessibility bridge exposes no controls.
+        """
+        return await self.observer.launch(command, args, wait_ms=wait_ms)
+
+    async def close(self) -> None:
+        await self.observer.aclose()
+        await super().close()
 
 
 # ---------------------------------------------------------------------------

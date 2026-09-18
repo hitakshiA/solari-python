@@ -107,6 +107,42 @@ class ConnectionError(SolariError):  # noqa: A001 - intentionally shadows builti
         super().__init__(message)
 
 
+class StaleObservationError(SolariError):
+    """An ``act`` target no longer matches the observation it was chosen from.
+
+    Raised before any input is dispatched, so the screen is untouched: observe
+    again and decide again. ``reason`` is a stable code:
+
+    - ``"stale"``: the control's role, name, value or state changed;
+    - ``"gone"``: the control no longer exists;
+    - ``"covered"``: it is covered, disabled or off screen and cannot be reached;
+    - ``"option"``: the requested option cannot be chosen;
+    - ``"unknown"``: ``ref`` is not an id in the observation.
+
+    Added in the solari-python fork.
+    """
+
+    def __init__(self, ref: Optional[str], reason: str, message: Optional[str] = None) -> None:
+        target = ref or "the target"
+        super().__init__(message or f"{target} {_STALE_REASONS.get(reason, reason)}; observe again")
+        self.ref = ref
+        self.reason = reason
+
+
+_STALE_REASONS = {
+    "stale": "changed since it was observed",
+    "gone": "is gone",
+    "covered": "is covered, disabled or gone",
+    "option": "has no such option",
+    "unknown": "is not a control in the last observation",
+}
+
+
+class ObserverError(SolariError):
+    """The desktop observer (``reflexd``) could not be installed, reached, or
+    answered with an error. Added in the solari-python fork."""
+
+
 def map_gateway_error(
     status: int,
     body: Optional[GatewayErrorBody],
@@ -144,5 +180,7 @@ __all__ = [
     "ActionError",
     "TimeoutError",
     "ConnectionError",
+    "StaleObservationError",
+    "ObserverError",
     "map_gateway_error",
 ]

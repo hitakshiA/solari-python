@@ -16,12 +16,14 @@ from .observation import (
     ActKey, ActKind, Observation, ObservedElement, SelectOption,
     format_observation, parse_observation,
 )
+from .reflex import DesktopObserver, ObserverTransport
 from .sandbox import Sandbox
 from .template_client import SyncTemplateClient, TemplateClient
 from .volume_client import SyncVolumeClient, VolumeClient
 from .errors import (
     ActionError, AuthError, ConcurrencyLimitError, ConnectionError,
     GatewayError, NoCapacityError, SolariError, PlanError, TimeoutError,
+    ObserverError, StaleObservationError,
 )
 from .types import (
     CodeLanguage, CodeResultItem, CommandResult, CreateDesktopResponse,
@@ -55,4 +57,5 @@ __all__ = [
     # solari-python fork: fast observe/act
     "ActKey", "ActKind", "Observation", "ObservedElement", "SelectOption",
     "format_observation", "parse_observation",
+    "DesktopObserver", "ObserverTransport", "ObserverError", "StaleObservationError",
 ]
