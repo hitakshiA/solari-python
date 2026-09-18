@@ -12,6 +12,10 @@ from ._http import HttpTransport, new_idempotency_key
 from .desktop import Desktop, DesktopConfig, ExecStreamHandler
 from .handle import SessionConfig, SessionHandle, SessionHooks
 from .image import CompiledImage, Image, LocalCopy
+from .observation import (
+    ActKey, ActKind, Observation, ObservedElement, SelectOption,
+    format_observation, parse_observation,
+)
 from .sandbox import Sandbox
 from .template_client import SyncTemplateClient, TemplateClient
 from .volume_client import SyncVolumeClient, VolumeClient
@@ -48,4 +52,7 @@ __all__ = [
     "CodeLanguage", "CodeResultItem", "CommandResult", "FsSearchMatch",
     "FsWatchEvent", "GitBranch", "GitCommit", "GitStatus", "MetricsResult",
     "RunCodeResult", "SandboxKind", "SandboxState", "SandboxView", "SnapshotView",
+    # solari-python fork: fast observe/act
+    "ActKey", "ActKind", "Observation", "ObservedElement", "SelectOption",
+    "format_observation", "parse_observation",
 ]
