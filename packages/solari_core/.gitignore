@@ -1,0 +1,71 @@
+# build artifacts
+dist/
+**/dist/
+**/node_modules/
+**/target/
+*.log
+
+# VM images / snapshots / kernels — large binaries, never committed
+*.img
+*.ext4
+*.qcow2
+*.raw
+*.snapshot
+/snapshots/build/
+/guest/rootfs/build/
+/guest/kernel/build/
+vmlinux
+bzImage
+
+# terraform state
+*.tfstate
+*.tfstate.*
+.terraform/
+*.tfvars.local
+
+# secrets / env
+.env
+.env.*
+*.pem
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# NOTE: tests/sdk/ts-request-fixtures.json is deliberately NOT ignored.
+#
+# It was, and that quietly disabled two gates at once:
+#
+#  1. ci.yml's "Committed fixture must match what the SDK emits today" step runs
+#     `git diff --exit-code tests/sdk/ts-request-fixtures.json`. On an ignored,
+#     never-tracked file that command can only ever succeed — it had never once
+#     been able to fail.
+#  2. The Go/Rust/C++/Python contract suites now assert against that fixture from
+#     inside their OWN CI jobs, none of which run the TypeScript half. If the file
+#     is not committed, it is simply absent there.
+#
+# It is generated, but it is generated from the REFERENCE SDK and checked in as
+# the baseline the other four bindings are held to — regenerating it and diffing
+# is exactly how a wire change is made to announce itself.
+
+# Built guest-agent binaries (produced by go build / build-rootfs staging)
+guest/agent/agent
+guest/rootfs/guest-agent
+
+# build-rootfs.sh template staging + generated Dockerfile (regenerated each run)
+guest/rootfs/guest-agent.service
+guest/rootfs/template.packages
+guest/rootfs/template-files/
+guest/rootfs/.Dockerfile.gen
+guest/rootfs/out/
+
+# local test artifacts
+staging-desktop.png
+desktop.png
+infra/terraform/snapshots-volumes/.build/
+
+# deploy-e2e scratch state: holds a presigned REPO_URL with live STS creds
+# (ASIA... + X-Amz-Security-Token). Never commit. Also stale PHASE_* here makes
+# a bare re-run skip bake+verify and exit 0 with zero assertions.
+infra/.deploy-e2e/

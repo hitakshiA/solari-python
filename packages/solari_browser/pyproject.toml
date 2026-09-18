@@ -1,0 +1,43 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "solari-browser"
+version = "0.1.3"
+description = "Python SDK for Solari Browser — managed, stealthy remote Chromium over the Playwright wire protocol / raw CDP."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "Apache-2.0" }
+authors = [{ name = "Solari" }]
+keywords = ["solari", "browser", "playwright", "cdp", "stealth", "automation", "scraping"]
+dependencies = [
+    "httpx>=0.24",
+    # patchright is Playwright-with-stealth-patches. The POOL runs patchright and
+    # the Playwright wire protocol embeds the client version in the User-Agent;
+    # the server rejects a mismatch with HTTP 428.
+    #
+    # The gate compares MAJOR.MINOR ONLY — patchright-core's playwrightServer does:
+    #     received = clientVersion.split(".").slice(0, 2).join(".")
+    #     expected = getPlaywrightVersion(/* majorMinorOnly */ true)
+    # so any 1.62.x client talks to the pool's 1.62.2 (node) server. This range is
+    # therefore pinned to the pool's major.minor, NOT to an exact version — the node
+    # and python patchright release trains can differ at the patch level.
+    #
+    # If the pool's `patchright` pin moves to 1.63+, this MUST move with it or every
+    # launch() 428s. Asserted (major.minor) by scripts/check-sdk-version-pin.mjs.
+    "patchright>=1.62,<1.63",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7", "ruff>=0.1"]
+
+[project.urls]
+Homepage = "https://getsolari.com"
+
+[tool.hatch.build.targets.wheel]
+packages = ["solari_browser"]
+
+[tool.ruff]
+line-length = 100
+

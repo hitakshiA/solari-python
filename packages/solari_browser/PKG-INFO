@@ -1,0 +1,66 @@
+Metadata-Version: 2.5
+Name: solari-browser
+Version: 0.1.3
+Summary: Python SDK for Solari Browser — managed, stealthy remote Chromium over the Playwright wire protocol / raw CDP.
+Project-URL: Homepage, https://getsolari.com
+Author: Solari
+License: Apache-2.0
+Keywords: automation,browser,cdp,playwright,scraping,solari,stealth
+Requires-Python: >=3.9
+Requires-Dist: httpx>=0.24
+Requires-Dist: patchright<1.63,>=1.62
+Provides-Extra: dev
+Requires-Dist: pytest>=7; extra == 'dev'
+Requires-Dist: ruff>=0.1; extra == 'dev'
+Description-Content-Type: text/markdown
+
+# solari-browser (Python)
+
+Python SDK for **Solari Browser** — managed, stealth-hardened remote Chromium as
+an API, driven over the Playwright wire protocol (or raw CDP). A faithful port of
+the TypeScript `@solarisdk/browser` package; class, method, and field names match
+it one-for-one (snake_case where TS uses camelCase).
+
+The browser runs remotely on Solari's pool — `pip install` pulls the driver only;
+you do **not** run `patchright install chromium` locally.
+
+## Install
+
+```sh
+pip install solari-browser
+```
+
+## Quickstart
+
+```python
+import asyncio, os
+from solari_browser import Solari
+
+async def main():
+    solari = Solari(api_key=os.environ["SOLARI_API_KEY"])
+    browser = await solari.launch(stealth=True)   # managed, stealth-hardened Chromium
+    page = await browser.new_page()
+    await page.goto("https://example.com")
+    print(await page.title())
+    await browser.close()
+
+asyncio.run(main())
+```
+
+## Sessions
+
+Drive a session yourself instead of `launch()`:
+
+```python
+solari = Solari(api_key=os.environ["SOLARI_API_KEY"])
+session = await solari.sessions.create(stealth=True, proxy="smart")
+# ... connect over the session's CDP/WS endpoint ...
+await solari.close()
+```
+
+`Solari(...)` accepts `api_key`, `region` (default `us-west`), and `base_url`
+(default `https://api.getsolari.com`).
+
+## Docs
+
+Full reference and language guides: <https://getsolari.com>

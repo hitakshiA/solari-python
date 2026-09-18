@@ -1,0 +1,20 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "solari-core"
+version = "0.2.1"
+description = "Shared runtime for the Solari VM SDKs (transport, session handles, image builder, types)."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "Solari" }]
+keywords = ["solari", "sandbox", "desktop", "microvm"]
+dependencies = ["httpx>=0.24", "websockets>=11.0"]
+
+[project.urls]
+Homepage = "https://getsolari.com"
+
+[tool.hatch.build.targets.wheel]
+packages = ["solari_core"]

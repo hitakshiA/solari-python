@@ -1,0 +1,32 @@
+# solari-sandbox (Python)
+
+Python SDK for **Solari Sandboxes** — fast, ephemeral code sandboxes (micro-VMs)
+with a code interpreter, filesystem, ports, and git. Mirrors the TypeScript
+`@solarisdk/sandbox` package.
+
+## Install
+```sh
+pip install solari-sandbox
+```
+
+## Quickstart
+```python
+import asyncio, os
+from solari_sandbox import SandboxClient
+
+async def main():
+    client = SandboxClient(api_key=os.environ["SOLARI_API_KEY"])
+    sb = await client.create(template="base")
+    await sb.connect()
+    result = await sb.run_code("print(6 * 7)")
+    print(result.stdout)                      # -> 42
+    await sb.kill()
+
+asyncio.run(main())
+```
+
+`SandboxClient(...)` accepts `api_key`, `base_url` (default
+`https://api.getsolari.com`), and `call_timeout_ms`. The same `slr_live_…` key
+authenticates against both the browser and desktop/sandbox APIs.
+
+Docs: <https://getsolari.com>

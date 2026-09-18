@@ -1,0 +1,28 @@
+Metadata-Version: 2.5
+Name: solari-core
+Version: 0.2.1
+Summary: Shared runtime for the Solari VM SDKs (transport, session handles, image builder, types).
+Project-URL: Homepage, https://getsolari.com
+Author: Solari
+License: MIT
+Keywords: desktop,microvm,sandbox,solari
+Requires-Python: >=3.9
+Requires-Dist: httpx>=0.24
+Requires-Dist: websockets>=11.0
+Description-Content-Type: text/markdown
+
+# solari-core
+
+Shared runtime for the Solari VM SDKs — the HTTP/WebSocket transport, the
+`Desktop` and `Sandbox` session handles, the image builder, and the typed error
+hierarchy. Mirrors the TypeScript `@solarisdk/core` package.
+
+You normally install a leaf package instead:
+
+- [`solari-desktop`](https://pypi.org/project/solari-desktop/) — computer-use desktops
+- [`solari-sandbox`](https://pypi.org/project/solari-sandbox/) — code sandboxes
+
+Both depend on and re-export `solari-core`, so `SandboxClient` / `DesktopClient`
+plus the shared types are importable straight from the leaf package.
+
+Docs: <https://getsolari.com>
