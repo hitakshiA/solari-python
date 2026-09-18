@@ -1,4 +1,7 @@
-"""Errors for the Solari Browser SDK. Mirrors `SolariError` in sdk/src/index.ts."""
+"""Errors for the Solari Browser SDK. Mirrors `SolariError` in sdk/src/index.ts.
+
+Modified in the solari-python fork: adds STALE_OBSERVATION and StaleObservationError.
+"""
 
 from __future__ import annotations
 

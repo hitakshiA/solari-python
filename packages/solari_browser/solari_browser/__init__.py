@@ -13,6 +13,9 @@ Managed, stealthy remote Chromium over the Playwright wire protocol / raw CDP.
                 print(await page.title())
 
     asyncio.run(main())
+
+Modified in the solari-python fork: also exports Observer, Observation,
+format_observation and StaleObservationError (fast observe/act).
 """
 
 from .browser_session import BrowserSession
