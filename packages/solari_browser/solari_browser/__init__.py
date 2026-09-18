@@ -22,8 +22,12 @@ from .errors import (
     CONCURRENCY_LIMIT_EXCEEDED,
     FEATURE_REQUIRES_PLAN,
     PLAN_LIMIT_EXCEEDED,
+    STALE_OBSERVATION,
     SolariError,
+    StaleObservationError,
 )
+from .observation import ActKind, Observation, ObservedElement, SelectOption, format_observation
+from .observe import OBSERVER_VERSION, Observer
 from .types import (
     DEFAULT_REGION,
     REGION_URLS,
@@ -56,5 +60,15 @@ __all__ = [
     "CONCURRENCY_LIMIT_EXCEEDED",
     "PLAN_LIMIT_EXCEEDED",
     "BROWSER_UNHEALTHY",
+    # solari-python fork: fast observe/act
+    "Observer",
+    "Observation",
+    "ObservedElement",
+    "SelectOption",
+    "ActKind",
+    "format_observation",
+    "OBSERVER_VERSION",
+    "StaleObservationError",
+    "STALE_OBSERVATION",
     "__version__",
 ]

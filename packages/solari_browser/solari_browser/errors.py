@@ -12,6 +12,8 @@ FEATURE_REQUIRES_PLAN = "FeatureRequiresPlan"
 CONCURRENCY_LIMIT_EXCEEDED = "ConcurrencyLimitExceeded"
 PLAN_LIMIT_EXCEEDED = "PlanLimitExceeded"
 BROWSER_UNHEALTHY = "BrowserUnhealthy"
+# Raised client-side by Observer.act (solari-python fork); never sent by the gateway.
+STALE_OBSERVATION = "StaleObservation"
 
 
 class SolariError(Exception):
@@ -45,6 +47,40 @@ class SolariError(Exception):
         if self.code:
             bits.append(f"code={self.code}")
         return f"{base} ({', '.join(bits)})" if bits else base
+
+
+class StaleObservationError(SolariError):
+    """An ``Observer.act`` target no longer matches the observation it was chosen from.
+
+    Raised before any input is dispatched, so the page is untouched: observe
+    again and decide again. ``code`` is ``STALE_OBSERVATION``; ``reason`` is:
+
+    - ``"stale"``: the control's role, name, value, state or row changed;
+    - ``"covered"``: it is covered, disabled or gone;
+    - ``"option"``: the requested ``<select>`` option cannot be chosen;
+    - ``"unknown"``: ``ref`` is not an id in the observation.
+
+    Added in the solari-python fork.
+    """
+
+    def __init__(self, ref: Optional[str], reason: str, message: Optional[str] = None) -> None:
+        target = ref or "the target"
+        super().__init__(
+            message or f"{target} {_STALE_REASONS.get(reason, reason)}; observe again",
+            None,
+            None,
+            STALE_OBSERVATION,
+        )
+        self.ref = ref
+        self.reason = reason
+
+
+_STALE_REASONS = {
+    "stale": "changed since it was observed",
+    "covered": "is covered, disabled or gone",
+    "option": "has no such option",
+    "unknown": "is not a control in the last observation",
+}
 
 
 def code_from_body(text: str) -> Optional[str]:

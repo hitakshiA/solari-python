@@ -1,0 +1,21 @@
+{
+  "url": "https://en.wikipedia.org/wiki/Main_Page",
+  "title": "Wikipedia, the free encyclopedia",
+  "viewport": {"width": 1280, "height": 800},
+  "scroll": {"y": 0, "height": 3200},
+  "text": "Welcome to Wikipedia,\nthe free encyclopedia that anyone can edit.\nGödel — «quoted» \"text\"",
+  "elements": [
+    {"id": "e1", "node": 4, "role": "link", "name": "Main page", "editable": false},
+    {"id": "e2", "node": 9, "role": "searchbox", "name": "Search Wikipedia", "editable": true, "value": "Gödel's \"incompleteness\"\ttheorems"},
+    {"id": "e3", "node": 11, "role": "checkbox", "name": "Remember me", "editable": false, "checked": "false"},
+    {"id": "e4", "node": 12, "role": "tab", "name": "Talk", "editable": false, "selected": "true", "expanded": "false"},
+    {"id": "e5", "node": 20, "role": "button", "name": "Open", "editable": false, "context": "Row 2 — Report.pdf"},
+    {"id": "e6", "node": 21, "role": "select", "name": "Language", "editable": false, "value": "English",
+     "options": [{"value": "de", "label": "Deutsch"}, {"value": "fr", "label": "Français"}]},
+    {"id": "e7", "node": 22, "role": "textbox", "name": "Notes", "editable": true, "value": ""}
+  ],
+  "omitted": 3,
+  "focused": "e2",
+  "pageKey": "k",
+  "guards": {"4": "g4", "9": "g9"}
+}
